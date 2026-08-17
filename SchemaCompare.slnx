@@ -1,0 +1,11 @@
+<Solution>
+  <Project Path="SchemaCompare.Cli/SchemaCompare.Cli.csproj" />
+  <Project Path="SchemaCompare.Core/SchemaCompare.Core.csproj" Id="619a4227-7b55-4871-894e-7e1fa55544bc" />
+  <Project Path="SchemaCompare.Providers.Firebird/SchemaCompare.Providers.Firebird.csproj" Id="2b454e16-df97-4750-99f1-9b393299f6f4" />
+  <Project Path="SchemaCompare.Providers.MariaDB/SchemaCompare.Providers.MariaDB.csproj" Id="2cd48ab2-1ad4-4445-bfcd-3dc3e6c39051" />
+  <Project Path="SchemaCompare.Providers.MySQL/SchemaCompare.Providers.MySQL.csproj" Id="ac331cdd-9e48-4210-b04a-47d0a7bfe18a" />
+  <Project Path="SchemaCompare.Providers.Oracle/SchemaCompare.Providers.Oracle.csproj" Id="f6ba5e2a-4118-4cf4-b942-850cb23de9e6" />
+  <Project Path="SchemaCompare.Providers.PostgreSQL/SchemaCompare.Providers.PostgreSQL.csproj" Id="fc02c48b-e368-4930-9134-3979b73247f9" />
+  <Project Path="SchemaCompare.Providers.SQLite/SchemaCompare.Providers.SQLite.csproj" Id="00a1ee6f-b27b-45a2-af58-4037d293e4e9" />
+  <Project Path="SchemaCompare.Providers.SqlServer/SchemaCompare.Providers.SqlServer.csproj" Id="042b0419-fee6-471c-8007-99c3f9826994" />
+</Solution>
