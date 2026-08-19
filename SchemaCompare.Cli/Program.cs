@@ -7,6 +7,7 @@ using SchemaCompare.Core.Interfaces;
 using SchemaCompare.Core.Models;
 using Spectre.Console;
 using System.CommandLine;
+using System.CommandLine.Help;
 
 // 1. Initial option configuration.
 RootCommand rootCommand = new("SchemaCompare — Database Schema Comparison Tool");
@@ -48,12 +49,15 @@ compareCommand.SetAction(async (parseResult, cancellationToken) =>
 
 rootCommand.Subcommands.Add(compareCommand);
 
+rootCommand.Options.Add(new HelpOption());
+compareCommand.Options.Add(new HelpOption());
+
 return await rootCommand.Parse(args).InvokeAsync();
 
 static async Task RunComparison(string sourceConn, string targetConn, ProviderTypeEnum providerType)
 {
     AnsiConsole.Write(new FigletText("SchemaCompare").LeftJustified().Color(Color.Blue));
-
+    
     // Instantiates via Factory.
     ISchemaReader reader = SchemaReaderFactory.Create(providerType);
 
