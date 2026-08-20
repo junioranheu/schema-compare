@@ -8,4 +8,5 @@
   <Project Path="SchemaCompare.Providers.PostgreSQL/SchemaCompare.Providers.PostgreSQL.csproj" Id="fc02c48b-e368-4930-9134-3979b73247f9" />
   <Project Path="SchemaCompare.Providers.SQLite/SchemaCompare.Providers.SQLite.csproj" Id="00a1ee6f-b27b-45a2-af58-4037d293e4e9" />
   <Project Path="SchemaCompare.Providers.SqlServer/SchemaCompare.Providers.SqlServer.csproj" Id="042b0419-fee6-471c-8007-99c3f9826994" />
+  <Project Path="SchemaCompare.UnitTests/SchemaCompare.UnitTests.csproj" Id="34cb3edc-822a-4950-9228-ecc20d13731b" />
 </Solution>
