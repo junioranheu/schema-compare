@@ -11,7 +11,7 @@ public class SqlScriptExportService
 {
     public static void GenerateAndDisplayScripts(SchemaDiff diff)
     {
-        IScriptGenerator scriptGenerator = new SqlScriptGenerator();
+        SqlScriptGenerator scriptGenerator = new();
         List<string> scripts = [.. scriptGenerator.GenerateScripts(diff)];
 
         if (scripts.Count == 0)
