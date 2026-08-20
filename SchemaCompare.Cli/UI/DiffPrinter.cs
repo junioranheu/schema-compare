@@ -48,7 +48,7 @@ public static class DiffPrinter
 
                 foreach (string detail in cm.Differences)
                 {
-                    colNode.AddNode($"[grey]Info:[/] {detail}");
+                    colNode.AddNode($"[grey]Info:[/] {Markup.Escape(detail)}");
                 }
             }
         }

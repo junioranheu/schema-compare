@@ -58,7 +58,6 @@ static async Task RunComparison(string sourceConn, string targetConn, ProviderTy
 {
     AnsiConsole.Write(new FigletText("SchemaCompare").LeftJustified().Color(Color.Blue));
     
-    // Instantiates via Factory.
     ISchemaReader reader = SchemaReaderFactory.Create(providerType);
 
     AnsiConsole.MarkupLine($"[grey]Analyzing schemas using provider {reader.ProviderName}...[/]\n");
