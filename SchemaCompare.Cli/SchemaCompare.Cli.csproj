@@ -16,7 +16,6 @@
     <ProjectReference Include="..\SchemaCompare.Providers.Firebird\SchemaCompare.Providers.Firebird.csproj" />
     <ProjectReference Include="..\SchemaCompare.Providers.MariaDB\SchemaCompare.Providers.MariaDB.csproj" />
     <ProjectReference Include="..\SchemaCompare.Providers.MySQL\SchemaCompare.Providers.MySQL.csproj" />
-    <ProjectReference Include="..\SchemaCompare.Providers.Oracle\SchemaCompare.Providers.Oracle.csproj" />
     <ProjectReference Include="..\SchemaCompare.Providers.PostgreSQL\SchemaCompare.Providers.PostgreSQL.csproj" />
     <ProjectReference Include="..\SchemaCompare.Providers.SqlServer\SchemaCompare.Providers.SqlServer.csproj" />
   </ItemGroup>

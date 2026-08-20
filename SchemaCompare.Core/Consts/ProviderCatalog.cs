@@ -38,13 +38,6 @@ public sealed class ProviderCatalog
         },
         new()
         {
-            ProviderType = ProviderTypeEnum.Oracle,
-            DisplayName = ProviderTypeEnum.Oracle.GetDescription(),
-            TestingStatus = TestingStatusEnum.NotTested,
-            TestingDate = null
-        },
-        new()
-        {
             ProviderType = ProviderTypeEnum.Firebird,
             DisplayName = ProviderTypeEnum.Firebird.GetDescription(),
             TestingStatus = TestingStatusEnum.NotTested,

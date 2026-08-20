@@ -13,9 +13,6 @@ public enum ProviderTypeEnum
     [Description("MySQL")]
     MySql,
 
-    [Description("Oracle")]
-    Oracle,
-
     [Description("Firebird")]
     Firebird,
 
