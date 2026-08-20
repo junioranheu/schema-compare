@@ -20,35 +20,40 @@ public sealed class ProviderCatalog
             ProviderType = ProviderTypeEnum.PostgreSql,
             DisplayName = ProviderTypeEnum.PostgreSql.GetDescription(),
             TestingStatus = TestingStatusEnum.TestedWithSimpleTable,
-            TestingDate = new DateOnly(2026, 8, 20)
+            RealTestingDate = new DateOnly(2026, 8, 20),
+            HasUnitTests = true
         },
         new()
         {
             ProviderType = ProviderTypeEnum.SqlServer,
             DisplayName = ProviderTypeEnum.SqlServer.GetDescription(),
             TestingStatus = TestingStatusEnum.NotTested,
-            TestingDate = null
+            RealTestingDate = null,
+            HasUnitTests = true
         },
         new()
         {
             ProviderType = ProviderTypeEnum.MySql,
             DisplayName = ProviderTypeEnum.MySql.GetDescription(),
             TestingStatus = TestingStatusEnum.NotTested,
-            TestingDate = null
+            RealTestingDate = null,
+            HasUnitTests = false
         },
         new()
         {
             ProviderType = ProviderTypeEnum.Firebird,
             DisplayName = ProviderTypeEnum.Firebird.GetDescription(),
             TestingStatus = TestingStatusEnum.NotTested,
-            TestingDate = null
+            RealTestingDate = null,
+            HasUnitTests = false
         },
         new()
         {
             ProviderType = ProviderTypeEnum.MariaDb,
             DisplayName = ProviderTypeEnum.MariaDb.GetDescription(),
             TestingStatus = TestingStatusEnum.NotTested,
-            TestingDate = null
+            RealTestingDate = null,
+            HasUnitTests = false
         }
     }.AsReadOnly();
 

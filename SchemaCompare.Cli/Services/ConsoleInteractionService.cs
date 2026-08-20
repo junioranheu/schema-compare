@@ -30,7 +30,7 @@ public static class ConsoleInteractionService
                 AddChoices(ProviderCatalog.AllProviders).
                 UseConverter(x =>
                     $"{x.DisplayName} ({x.TestingStatus.GetDescription().ToLowerInvariant()}" +
-                    $"{(x.TestingDate.HasValue ? $" on {x.TestingDate:yyyy-MM-dd}" : "")})"));
+                    $"{(x.RealTestingDate.HasValue ? $" on {x.RealTestingDate:yyyy-MM-dd}" : "")})"));
 
         return selectedProvider.ProviderType;
     }

@@ -11,5 +11,6 @@ public class ProviderInfo
 
     public required string DisplayName { get; init; }
     public required TestingStatusEnum TestingStatus { get; init; }
-    public required DateOnly? TestingDate { get; init; }
+    public required DateOnly? RealTestingDate { get; init; } // Date when the provider was last tested against a real-world schema.
+    public required bool HasUnitTests { get; init; }
 }
