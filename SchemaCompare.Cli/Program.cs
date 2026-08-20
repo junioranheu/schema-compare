@@ -1,10 +1,11 @@
-﻿using SchemaCompare.Cli.Factories;
+using SchemaCompare.Cli.Factories;
 using SchemaCompare.Cli.UI;
 using SchemaCompare.Core.DiffEngine;
 using SchemaCompare.Core.Diffs;
 using SchemaCompare.Core.Enums;
 using SchemaCompare.Core.Interfaces;
 using SchemaCompare.Core.Models;
+using SchemaCompare.Core.ScriptGeneration;
 using Spectre.Console;
 
 const string appTitle = "Database Schema Comparison Tool";
@@ -26,7 +27,7 @@ ProviderTypeEnum providerSelection = AnsiConsole.
 AnsiConsole.MarkupLine("");
 
 // Get source database info.
-string sourceName = AnsiConsole.Ask<string>(prompt: "[bold]Source database name[/] (e.g. dev):");
+string sourceName = AnsiConsole.Ask<string>(prompt: "[bold]Source database name[/] (e.g. development):");
 
 string sourceConn = AnsiConsole.
     Prompt(new TextPrompt<string>(prompt: $"[bold]Connection string for {sourceName}[/]:").
@@ -35,7 +36,7 @@ string sourceConn = AnsiConsole.
 AnsiConsole.MarkupLine("");
 
 // Get target database info.
-string targetName = AnsiConsole.Ask<string>(prompt: "[bold]Target database name[/] (e.g. prod):");
+string targetName = AnsiConsole.Ask<string>(prompt: "[bold]Target database name[/] (e.g. production):");
 
 string targetConn = AnsiConsole.Prompt(new TextPrompt<string>($"[bold]Connection string for {targetName}[/]:").
     PromptStyle("green"));
@@ -67,9 +68,73 @@ static async Task RunComparison(string sourceName, string sourceConn, string tar
 
         AnsiConsole.MarkupLine("");
         DiffPrinter.Print(diff);
+
+        // If there are differences, offer to generate SQL scripts.
+        if (diff.HasDifferences)
+        {
+            AnsiConsole.MarkupLine("");
+            if (AnsiConsole.Confirm("[yellow]Do you want to generate SQL scripts to synchronize the databases?[/]", defaultValue: true))
+            {
+                AnsiConsole.MarkupLine("");
+                GenerateAndDisplayScripts(diff);
+            }
+        }
     }
     catch (Exception ex)
     {
-        AnsiConsole.MarkupLine($"[red]\\nFatal error:[/] {ex.Message}");
+        AnsiConsole.MarkupLine($"[red]\nFatal error:[/] {ex.Message}");
+    }
+}
+
+static void GenerateAndDisplayScripts(SchemaDiff diff)
+{
+    IScriptGenerator generator = new SqlScriptGenerator();
+    List<string> scripts = [.. generator.GenerateScripts(diff)];
+
+    if (scripts.Count == 0)
+    {
+        AnsiConsole.MarkupLine("[yellow]No scripts generated.[/]");
+        return;
+    }
+
+    // Display scripts in console.
+    AnsiConsole.MarkupLine("[bold cyan]Generated SQL Scripts:[/]\n");
+
+    // Normalize scripts for display by escaping special characters.
+    for (int i = 0; i < scripts.Count; i++)
+    {
+        scripts[i] = Markup.Escape(scripts[i]);
+    }
+
+    Panel panel = new(string.Join("\n\n", scripts))
+    {
+        Border = BoxBorder.Rounded,
+        Padding = new Padding(1, 1)
+    };
+
+    AnsiConsole.Write(panel);
+
+    // Offer to export to file.
+    AnsiConsole.MarkupLine("");
+
+    if (AnsiConsole.Confirm("[yellow]Do you want to save these scripts to a file?[/]", defaultValue: true))
+    {
+        try
+        {
+            string downloadsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+
+            if (!Directory.Exists(downloadsFolder))
+            {
+                Directory.CreateDirectory(downloadsFolder);
+            }
+
+            string fileName = Path.Combine(downloadsFolder, $"{DateTime.Now:yyyyMMdd_HHmmss}.sql");
+            File.WriteAllText(fileName, string.Join("\n\n", scripts));
+            AnsiConsole.MarkupLine($"[green]✓ Scripts saved to: {fileName}[/]");
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.MarkupLine($"[red]✗ Error saving file: {ex.Message}[/]");
+        }
     }
 }
