@@ -281,23 +281,18 @@ MODIFIED TABLES
 
 ## 🧪 Testing
 
-The project includes comprehensive unit tests:
+The project includes unit tests:
 
 ```bash
 # Run all tests
 dotnet test
-
-# Run tests for a specific provider
-dotnet test --filter "PostgreSQL"
-
-# Run with code coverage
-dotnet test /p:CollectCoverage=true
 ```
 
 ### Current status
 
 - ✅ **Unit Tests**: Implemented for all providers.
-- ✅ **PostgreSQL**: Tested with real data (2026-08-20).
+- ✅ **PostgreSQL**: Tested with real data (2026-08-19).
+- ✅ **MySql**: Tested with real data (2026-08-20).
 - ⚠️ **Others**: Need to be tested in real-world environments.
 
 ---
