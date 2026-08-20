@@ -25,7 +25,6 @@ public class SqlScriptGenerator : IScriptGenerator
         return scripts;
     }
 
-    #region extras
     protected virtual IEnumerable<string> GenerateDropTableScripts(IReadOnlyCollection<TableDiff> tables)
     {
         List<string> scripts = [];
@@ -134,5 +133,4 @@ public class SqlScriptGenerator : IScriptGenerator
         return $"-- Modify: {diffComment}\n" +
                $"ALTER TABLE {table.FullName} MODIFY COLUMN {definition};";
     }
-    #endregion
 }
