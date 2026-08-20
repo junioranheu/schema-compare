@@ -37,7 +37,7 @@ public sealed class ProviderCatalog
             DisplayName = ProviderTypeEnum.MySql.GetDescription(),
             TestingStatus = TestingStatusEnum.NotTested,
             RealTestingDate = null,
-            HasUnitTests = false
+            HasUnitTests = true
         },
         new()
         {
