@@ -7,7 +7,7 @@ namespace SchemaCompare.Core.Enums;
 /// </summary>
 public enum TestingStatusEnum
 {
-    [Description("Not tested")]
+    [Description("Not tested in a real environment")]
     NotTested = 0,
 
     [Description("Tested with a simple schema")]
