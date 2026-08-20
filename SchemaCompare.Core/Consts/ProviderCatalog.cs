@@ -45,7 +45,7 @@ public sealed class ProviderCatalog
             DisplayName = ProviderTypeEnum.Firebird.GetDescription(),
             TestingStatus = TestingStatusEnum.NotTested,
             RealTestingDate = null,
-            HasUnitTests = false
+            HasUnitTests = true
         },
         new()
         {
@@ -53,7 +53,7 @@ public sealed class ProviderCatalog
             DisplayName = ProviderTypeEnum.MariaDb.GetDescription(),
             TestingStatus = TestingStatusEnum.NotTested,
             RealTestingDate = null,
-            HasUnitTests = false
+            HasUnitTests = true
         }
     }.AsReadOnly();
 

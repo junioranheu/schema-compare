@@ -2,33 +2,34 @@ using MySqlConnector;
 using SchemaCompare.Core.Interfaces;
 using SchemaCompare.Core.Models;
 using SchemaCompare.Core.SchemaReader;
+using SchemaCompare.Providers.MariaDB.SchemaReader;
 using SchemaCompare.Providers.MySQL.SchemaReader;
 using System.Reflection;
 
-namespace SchemaCompare.UnitTests.Providers.MySQL;
+namespace SchemaCompare.UnitTests.Providers.MariaDB;
 
-public class MySqlSchemaReaderTests
+public class MariaDbSchemaReaderTests
 {
-    private readonly MySqlSchemaReader _reader;
+    private readonly MariaDbSchemaReader _reader;
 
-    public MySqlSchemaReaderTests()
+    public MariaDbSchemaReaderTests()
     {
-        _reader = new MySqlSchemaReader();
+        _reader = new MariaDbSchemaReader();
     }
 
     #region ProviderName Tests
     [Fact]
-    public void ProviderName_ShouldReturnMySQL()
+    public void ProviderName_ShouldReturnMariaDB()
     {
         // Act
         string providerName = _reader.ProviderName;
 
         // Assert
-        Assert.Equal("MySQL", providerName);
+        Assert.Equal("MariaDB", providerName);
     }
 
     [Fact]
-    public void MySqlSchemaReader_ShouldImplementISchemaReader()
+    public void MariaDbSchemaReader_ShouldImplementISchemaReader()
     {
         // Assert
         Assert.IsType<ISchemaReader>(_reader, exactMatch: false);
@@ -43,7 +44,7 @@ public class MySqlSchemaReaderTests
         // Arrange
         string emptyConnectionString = string.Empty;
 
-        // Act & Assert - MySqlConnection throws MySqlException when connection string is empty
+        // Act & Assert - MariaDbConnection throws MySqlException when connection string is empty
         await Assert.ThrowsAsync<MySqlException>(async () =>
         {
             await _reader.ReadSchemaAsync(emptyConnectionString);
@@ -56,8 +57,7 @@ public class MySqlSchemaReaderTests
         // Arrange
         string connectionStringWithoutDb = "Server=localhost;User=root;Password=password;";
 
-        // Act & Assert - MySqlConnection will fail to connect since the host is unavailable
-        // This test documents the actual error type thrown by MySqlConnector
+        // Act & Assert - MariaDbConnection will fail to connect since the host is unavailable
         try
         {
             await _reader.ReadSchemaAsync(connectionStringWithoutDb);
@@ -91,7 +91,7 @@ public class MySqlSchemaReaderTests
     }
     #endregion
 
-    #region BuildTables Tests (via Reflection)
+    #region BuildTables Tests (via Reflection - uses MySqlSchemaReader base class)
     [Fact]
     public void BuildTables_WithEmptyInput_ReturnsEmptyList()
     {
@@ -281,7 +281,7 @@ public class MySqlSchemaReaderTests
     }
     #endregion
 
-    #region GetTablesQuery Tests
+    #region GetTablesQuery Tests (via Reflection - uses MySqlSchemaReader base class)
     [Fact]
     public void GetTablesQuery_ReturnsNonEmptyString()
     {
@@ -325,7 +325,7 @@ public class MySqlSchemaReaderTests
     }
     #endregion
 
-    #region GetDatabaseName Tests
+    #region GetDatabaseName Tests (via Reflection - uses MySqlSchemaReader base class)
     [Fact]
     public void GetDatabaseName_WithValidConnectionString_ReturnsDatabaseName()
     {

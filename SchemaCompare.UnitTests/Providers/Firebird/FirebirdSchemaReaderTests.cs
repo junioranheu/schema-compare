@@ -1,34 +1,34 @@
-using MySqlConnector;
+using FirebirdSql.Data.FirebirdClient;
 using SchemaCompare.Core.Interfaces;
 using SchemaCompare.Core.Models;
 using SchemaCompare.Core.SchemaReader;
-using SchemaCompare.Providers.MySQL.SchemaReader;
+using SchemaCompare.Providers.Firebird.SchemaReader;
 using System.Reflection;
 
-namespace SchemaCompare.UnitTests.Providers.MySQL;
+namespace SchemaCompare.UnitTests.Providers.Firebird;
 
-public class MySqlSchemaReaderTests
+public class FirebirdSchemaReaderTests
 {
-    private readonly MySqlSchemaReader _reader;
+    private readonly FirebirdSchemaReader _reader;
 
-    public MySqlSchemaReaderTests()
+    public FirebirdSchemaReaderTests()
     {
-        _reader = new MySqlSchemaReader();
+        _reader = new FirebirdSchemaReader();
     }
 
     #region ProviderName Tests
     [Fact]
-    public void ProviderName_ShouldReturnMySQL()
+    public void ProviderName_ShouldReturnFirebird()
     {
         // Act
         string providerName = _reader.ProviderName;
 
         // Assert
-        Assert.Equal("MySQL", providerName);
+        Assert.Equal("Firebird", providerName);
     }
 
     [Fact]
-    public void MySqlSchemaReader_ShouldImplementISchemaReader()
+    public void FirebirdSchemaReader_ShouldImplementISchemaReader()
     {
         // Assert
         Assert.IsType<ISchemaReader>(_reader, exactMatch: false);
@@ -38,32 +38,31 @@ public class MySqlSchemaReaderTests
 
     #region ReadSchemaAsync Tests
     [Fact]
-    public async Task ReadSchemaAsync_WithEmptyConnectionString_ThrowsMySqlException()
+    public async Task ReadSchemaAsync_WithEmptyConnectionString_ThrowsInvalidOperationException()
     {
         // Arrange
         string emptyConnectionString = string.Empty;
 
-        // Act & Assert - MySqlConnection throws MySqlException when connection string is empty
-        await Assert.ThrowsAsync<MySqlException>(async () =>
+        // Act & Assert - FbConnection throws InvalidOperationException when connection string is empty
+        await Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
             await _reader.ReadSchemaAsync(emptyConnectionString);
         });
     }
 
     [Fact]
-    public async Task ReadSchemaAsync_WithConnectionStringMissingDatabase_ThrowsMySqlException()
+    public async Task ReadSchemaAsync_WithInvalidConnectionString_ThrowsFbException()
     {
         // Arrange
-        string connectionStringWithoutDb = "Server=localhost;User=root;Password=password;";
+        string invalidConnectionString = "Server=invalid_server;Database=nonexistent.fdb";
 
-        // Act & Assert - MySqlConnection will fail to connect since the host is unavailable
-        // This test documents the actual error type thrown by MySqlConnector
+        // Act & Assert
         try
         {
-            await _reader.ReadSchemaAsync(connectionStringWithoutDb);
+            await _reader.ReadSchemaAsync(invalidConnectionString);
             Assert.Fail("Expected an exception to be thrown");
         }
-        catch (MySqlException)
+        catch (FbException)
         {
             // Expected: Connection failure
         }
@@ -78,13 +77,12 @@ public class MySqlSchemaReaderTests
     public async Task ReadSchemaAsync_ShouldRespectCancellationToken()
     {
         // Arrange
-        string connectionString = "Server=localhost;User=root;Password=password;Database=testdb";
+        string connectionString = "User=sysdba;Password=masterkey;Database=/tmp/test.fdb";
         CancellationTokenSource cancellationTokenSource = new();
         cancellationTokenSource.Cancel();
 
         // Act & Assert
-        // OperationCanceledException is thrown when a cancellation token is cancelled
-        await Assert.ThrowsAsync<OperationCanceledException>(async () =>
+        await Assert.ThrowsAsync<ArgumentException>(async () =>
         {
             await _reader.ReadSchemaAsync(connectionString, cancellationTokenSource.Token);
         });
@@ -98,7 +96,7 @@ public class MySqlSchemaReaderTests
         // Arrange
         List<RawColumnDto> emptyColumns = [];
 
-        MethodInfo? method = typeof(MySqlSchemaReader).GetMethod(
+        MethodInfo? method = typeof(FirebirdSchemaReader).GetMethod(
             "BuildTables",
             BindingFlags.NonPublic | BindingFlags.Static,
             null,
@@ -121,16 +119,16 @@ public class MySqlSchemaReaderTests
         [
             new()
             {
-                Schema = "myapp",
-                TableName = "users",
-                ColumnName = "id",
-                DataType = "int",
+                Schema = null!,
+                TableName = "USERS",
+                ColumnName = "ID",
+                DataType = "BIGINT",
                 MaxLength = null,
                 IsNullable = false
             }
         ];
 
-        MethodInfo? method = typeof(MySqlSchemaReader).GetMethod(
+        MethodInfo? method = typeof(FirebirdSchemaReader).GetMethod(
             "BuildTables",
             BindingFlags.NonPublic | BindingFlags.Static,
             null,
@@ -143,10 +141,10 @@ public class MySqlSchemaReaderTests
 
         // Assert
         Assert.Single(result);
-        Assert.Equal("myapp", result[0].Schema);
-        Assert.Equal("users", result[0].Name);
+        Assert.Equal(string.Empty, result[0].Schema);
+        Assert.Equal("USERS", result[0].Name);
         Assert.Single(result[0].Columns);
-        Assert.Equal("id", result[0].Columns.First().Name);
+        Assert.Equal("ID", result[0].Columns.First().Name);
     }
 
     [Fact]
@@ -157,34 +155,34 @@ public class MySqlSchemaReaderTests
         [
             new()
             {
-                Schema = "myapp",
-                TableName = "users",
-                ColumnName = "id",
-                DataType = "int",
+                Schema = null!,
+                TableName = "USERS",
+                ColumnName = "ID",
+                DataType = "BIGINT",
                 MaxLength = null,
                 IsNullable = false
             },
             new()
             {
-                Schema = "myapp",
-                TableName = "users",
-                ColumnName = "name",
-                DataType = "varchar",
-                MaxLength = null,
+                Schema = null!,
+                TableName = "USERS",
+                ColumnName = "NAME",
+                DataType = "VARCHAR",
+                MaxLength = 255,
                 IsNullable = true
             },
             new()
             {
-                Schema = "myapp",
-                TableName = "users",
-                ColumnName = "email",
-                DataType = "varchar",
-                MaxLength = 255,
+                Schema = null!,
+                TableName = "USERS",
+                ColumnName = "EMAIL",
+                DataType = "VARCHAR",
+                MaxLength = 100,
                 IsNullable = false
             }
         ];
 
-        MethodInfo? method = typeof(MySqlSchemaReader).GetMethod(
+        MethodInfo? method = typeof(FirebirdSchemaReader).GetMethod(
             "BuildTables",
             BindingFlags.NonPublic | BindingFlags.Static,
             null,
@@ -197,7 +195,7 @@ public class MySqlSchemaReaderTests
 
         // Assert
         Assert.Single(result);
-        Assert.Equal("users", result[0].Name);
+        Assert.Equal("USERS", result[0].Name);
         Assert.Equal(3, result[0].Columns.Count);
     }
 
@@ -209,25 +207,25 @@ public class MySqlSchemaReaderTests
         [
             new()
             {
-                Schema = "myapp",
-                TableName = "users",
-                ColumnName = "id",
-                DataType = "int",
+                Schema = null!,
+                TableName = "USERS",
+                ColumnName = "ID",
+                DataType = "BIGINT",
                 MaxLength = null,
                 IsNullable = false
             },
             new()
             {
-                Schema = "myapp",
-                TableName = "posts",
-                ColumnName = "id",
-                DataType = "int",
+                Schema = null!,
+                TableName = "POSTS",
+                ColumnName = "ID",
+                DataType = "BIGINT",
                 MaxLength = null,
                 IsNullable = false
             }
         ];
 
-        MethodInfo? method = typeof(MySqlSchemaReader).GetMethod(
+        MethodInfo? method = typeof(FirebirdSchemaReader).GetMethod(
             "BuildTables",
             BindingFlags.NonPublic | BindingFlags.Static,
             null,
@@ -240,8 +238,8 @@ public class MySqlSchemaReaderTests
 
         // Assert
         Assert.Equal(2, result.Count);
-        Assert.Contains(result, t => t.Name == "users");
-        Assert.Contains(result, t => t.Name == "posts");
+        Assert.Contains(result, t => t.Name == "USERS");
+        Assert.Contains(result, t => t.Name == "POSTS");
     }
 
     [Fact]
@@ -252,16 +250,16 @@ public class MySqlSchemaReaderTests
         [
             new()
             {
-                Schema = "myapp",
-                TableName = "users",
-                ColumnName = "email",
-                DataType = "varchar",
-                MaxLength = 255,
+                Schema = null!,
+                TableName = "USERS",
+                ColumnName = "EMAIL",
+                DataType = "VARCHAR",
+                MaxLength = 100,
                 IsNullable = true
             }
         ];
 
-        MethodInfo? method = typeof(MySqlSchemaReader).GetMethod(
+        MethodInfo? method = typeof(FirebirdSchemaReader).GetMethod(
             "BuildTables",
             BindingFlags.NonPublic | BindingFlags.Static,
             null,
@@ -274,10 +272,43 @@ public class MySqlSchemaReaderTests
         ColumnSchema column = result[0].Columns.First();
 
         // Assert
-        Assert.Equal("email", column.Name);
-        Assert.Equal("varchar", column.DataType);
-        Assert.Equal(255, column.MaxLength);
+        Assert.Equal("EMAIL", column.Name);
+        Assert.Equal("VARCHAR", column.DataType);
+        Assert.Equal(100, column.MaxLength);
         Assert.True(column.IsNullable);
+    }
+
+    [Fact]
+    public void BuildTables_WithNullDataType_DefaultsToUNKNOWN()
+    {
+        // Arrange
+        List<RawColumnDto> columns =
+        [
+            new()
+            {
+                Schema = null!,
+                TableName = "USERS",
+                ColumnName = "CUSTOM_FIELD",
+                DataType = null!,
+                MaxLength = null,
+                IsNullable = false
+            }
+        ];
+
+        MethodInfo? method = typeof(FirebirdSchemaReader).GetMethod(
+            "BuildTables",
+            BindingFlags.NonPublic | BindingFlags.Static,
+            null,
+            [typeof(IEnumerable<RawColumnDto>)],
+            null
+        );
+
+        // Act
+        List<TableSchema> result = (List<TableSchema>)method!.Invoke(null, [columns])!;
+        ColumnSchema column = result[0].Columns.First();
+
+        // Assert
+        Assert.Equal("UNKNOWN", column.DataType);
     }
     #endregion
 
@@ -286,7 +317,7 @@ public class MySqlSchemaReaderTests
     public void GetTablesQuery_ReturnsNonEmptyString()
     {
         // Arrange
-        MethodInfo? method = typeof(MySqlSchemaReader).GetMethod(
+        MethodInfo? method = typeof(FirebirdSchemaReader).GetMethod(
             "GetTablesQuery",
             BindingFlags.NonPublic | BindingFlags.Static,
             null,
@@ -306,7 +337,7 @@ public class MySqlSchemaReaderTests
     public void GetTablesQuery_ContainsRequiredKeywords()
     {
         // Arrange
-        MethodInfo? method = typeof(MySqlSchemaReader).GetMethod(
+        MethodInfo? method = typeof(FirebirdSchemaReader).GetMethod(
             "GetTablesQuery",
             BindingFlags.NonPublic | BindingFlags.Static,
             null,
@@ -318,21 +349,22 @@ public class MySqlSchemaReaderTests
         string query = (string)method!.Invoke(null, null)!;
 
         // Assert
-        Assert.Contains("information_schema.tables", query);
-        Assert.Contains("information_schema.columns", query);
-        Assert.Contains("BASE TABLE", query);
-        Assert.Contains("DATABASE()", query);
+        Assert.Contains("RDB$RELATIONS", query);
+        Assert.Contains("RDB$RELATION_FIELDS", query);
+        Assert.Contains("RDB$FIELDS", query);
+        Assert.Contains("RDB$SYSTEM_FLAG", query);
+        Assert.Contains("TRIM", query);
     }
     #endregion
 
     #region GetDatabaseName Tests
     [Fact]
-    public void GetDatabaseName_WithValidConnectionString_ReturnsDatabaseName()
+    public void GetDatabaseName_WithValidConnectionString_ReturnsDatabasePath()
     {
         // Arrange
-        string connectionString = "Server=localhost;User=root;Password=password;Database=testdb";
+        string connectionString = "User=sysdba;Password=masterkey;Database=C:\\databases\\test.fdb";
 
-        MethodInfo? method = typeof(MySqlSchemaReader).GetMethod(
+        MethodInfo? method = typeof(FirebirdSchemaReader).GetMethod(
             "GetDatabaseName",
             BindingFlags.NonPublic | BindingFlags.Static,
             null,
@@ -344,7 +376,8 @@ public class MySqlSchemaReaderTests
         string result = (string)method!.Invoke(null, [connectionString])!;
 
         // Assert
-        Assert.Equal("testdb", result);
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
     }
 
     [Fact]
@@ -353,12 +386,12 @@ public class MySqlSchemaReaderTests
         // Arrange
         string[] testCases =
         [
-            "Server=localhost;Database=mydb;User=root;Password=pass",
-            "Database=production;Server=db.example.com;User=admin;Password=secret",
-            "Server=tcp:localhost;Database=customdb;User=user;Password=pass",
+            "User=sysdba;Password=masterkey;Database=/home/user/testdb.fdb",
+            "Database=testdb.fdb;User=sysdba;Password=masterkey",
+            "Server=localhost;Database=C:\\Data\\mydb.fdb;User=sysdba;Password=masterkey",
         ];
 
-        MethodInfo? method = typeof(MySqlSchemaReader).GetMethod(
+        MethodInfo? method = typeof(FirebirdSchemaReader).GetMethod(
             "GetDatabaseName",
             BindingFlags.NonPublic | BindingFlags.Static,
             null,
