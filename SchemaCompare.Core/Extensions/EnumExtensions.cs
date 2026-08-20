@@ -4,15 +4,15 @@ using System.Reflection;
 namespace SchemaCompare.Core.Extensions;
 
 /// <summary>
-/// Extensões para enums
+/// Provides extensions for enums.
 /// </summary>
 public static class EnumExtensions
 {
     /// <summary>
-    /// Obtém a descrição de um valor de enum usando o atributo Description
+    /// Gets the description of an enum value using the Description attribute.
     /// </summary>
-    /// <param name="value">Valor do enum</param>
-    /// <returns>Descrição ou string vazia se não encontrada</returns>
+    /// <param name="value">The enum value.</param>
+    /// <returns>The description, or the enum value name if no description is found.</returns>
     public static string GetDescription(this Enum value)
     {
         FieldInfo? field = value.GetType().GetField(value.ToString());

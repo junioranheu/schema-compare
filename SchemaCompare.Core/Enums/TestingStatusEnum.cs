@@ -3,7 +3,7 @@ using System.ComponentModel;
 namespace SchemaCompare.Core.Enums;
 
 /// <summary>
-/// Enum que define o status de testes de um provider de banco de dados
+/// Defines the testing status of a database provider.
 /// </summary>
 public enum TestingStatusEnum
 {

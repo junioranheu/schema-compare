@@ -28,7 +28,9 @@ public static class ConsoleInteractionService
                 Title("[bold]Which database are you using?[/]").
                 PageSize(10).
                 AddChoices(ProviderCatalog.AllProviders).
-                UseConverter(x => $"{x.DisplayName} ({x.TestingStatus.GetDescription().ToLowerInvariant()})"));
+                UseConverter(x =>
+                    $"{x.DisplayName} ({x.TestingStatus.GetDescription().ToLowerInvariant()}" +
+                    $"{(x.TestingDate.HasValue ? $" on {x.TestingDate:yyyy-MM-dd}" : "")})"));
 
         return selectedProvider.ProviderType;
     }
