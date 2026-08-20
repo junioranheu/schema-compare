@@ -3,6 +3,7 @@ using SchemaCompare.Core.Interfaces;
 using SchemaCompare.Core.Models;
 using SchemaCompare.Core.SchemaReader;
 using SchemaCompare.Providers.PostgreSQL.SchemaReader;
+using System.Reflection;
 
 namespace SchemaCompare.UnitTests.Providers.PostgreSQL;
 
@@ -16,12 +17,11 @@ public class PostgresSchemaReaderTests
     }
 
     #region ProviderName Tests
-
     [Fact]
     public void ProviderName_ShouldReturnPostgreSQL()
     {
         // Act
-        var providerName = _reader.ProviderName;
+        string providerName = _reader.ProviderName;
 
         // Assert
         Assert.Equal("PostgreSQL", providerName);
@@ -37,7 +37,6 @@ public class PostgresSchemaReaderTests
     #endregion
 
     #region ReadSchemaAsync Tests
-
     [Fact]
     public async Task ReadSchemaAsync_WithEmptyConnectionString_ThrowsInvalidOperationException()
     {
@@ -80,7 +79,7 @@ public class PostgresSchemaReaderTests
     {
         // Arrange
         string connectionString = "Host=localhost;Username=postgres;Password=password;Database=testdb";
-        var cancellationTokenSource = new CancellationTokenSource();
+        CancellationTokenSource cancellationTokenSource = new ();
         cancellationTokenSource.Cancel();
 
         // Act & Assert
@@ -89,26 +88,25 @@ public class PostgresSchemaReaderTests
             await _reader.ReadSchemaAsync(connectionString, cancellationTokenSource.Token);
         });
     }
-
     #endregion
 
     #region BuildTables Tests (via Reflection)
-
     [Fact]
     public void BuildTables_WithEmptyInput_ReturnsEmptyList()
     {
         // Arrange
-        var emptyColumns = new List<RawColumnDto>();
-        var method = typeof(PostgresSchemaReader).GetMethod(
+        List<RawColumnDto> emptyColumns = [];
+
+        MethodInfo? method = typeof(PostgresSchemaReader).GetMethod(
             "BuildTables",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static,
+            BindingFlags.NonPublic | BindingFlags.Static,
             null,
             [typeof(IEnumerable<RawColumnDto>)],
             null
         );
 
         // Act
-        var result = (List<TableSchema>)method!.Invoke(null, [emptyColumns])!;
+        List<TableSchema> result = (List<TableSchema>)method!.Invoke(null, [emptyColumns])!;
 
         // Assert
         Assert.Empty(result);
@@ -118,8 +116,8 @@ public class PostgresSchemaReaderTests
     public void BuildTables_WithSingleColumn_ReturnsSingleTable()
     {
         // Arrange
-        var columns = new List<RawColumnDto>
-        {
+        List<RawColumnDto> columns =
+        [
             new()
             {
                 Schema = "public",
@@ -129,18 +127,18 @@ public class PostgresSchemaReaderTests
                 MaxLength = null,
                 IsNullable = false
             }
-        };
+        ];
 
-        var method = typeof(PostgresSchemaReader).GetMethod(
+        MethodInfo? method = typeof(PostgresSchemaReader).GetMethod(
             "BuildTables",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static,
+            BindingFlags.NonPublic | BindingFlags.Static,
             null,
             [typeof(IEnumerable<RawColumnDto>)],
             null
         );
 
         // Act
-        var result = (List<TableSchema>)method!.Invoke(null, [columns])!;
+        List<TableSchema> result = (List<TableSchema>)method!.Invoke(null, [columns])!;
 
         // Assert
         Assert.Single(result);
@@ -154,8 +152,8 @@ public class PostgresSchemaReaderTests
     public void BuildTables_WithMultipleColumnsInSameTable_GroupsCorrectly()
     {
         // Arrange
-        var columns = new List<RawColumnDto>
-        {
+        List<RawColumnDto> columns =
+        [
             new()
             {
                 Schema = "public",
@@ -183,18 +181,18 @@ public class PostgresSchemaReaderTests
                 MaxLength = 255,
                 IsNullable = false
             }
-        };
+        ];
 
-        var method = typeof(PostgresSchemaReader).GetMethod(
+        MethodInfo? method = typeof(PostgresSchemaReader).GetMethod(
             "BuildTables",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static,
+            BindingFlags.NonPublic | BindingFlags.Static,
             null,
             [typeof(IEnumerable<RawColumnDto>)],
             null
         );
 
         // Act
-        var result = (List<TableSchema>)method!.Invoke(null, [columns])!;
+        List<TableSchema> result = (List<TableSchema>)method!.Invoke(null, [columns])!;
 
         // Assert
         Assert.Single(result);
@@ -206,8 +204,8 @@ public class PostgresSchemaReaderTests
     public void BuildTables_WithMultipleTables_CreatesSeparateTables()
     {
         // Arrange
-        var columns = new List<RawColumnDto>
-        {
+        List<RawColumnDto> columns =
+        [
             new()
             {
                 Schema = "public",
@@ -226,18 +224,18 @@ public class PostgresSchemaReaderTests
                 MaxLength = null,
                 IsNullable = false
             }
-        };
+        ];
 
-        var method = typeof(PostgresSchemaReader).GetMethod(
+        MethodInfo? method = typeof(PostgresSchemaReader).GetMethod(
             "BuildTables",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static,
+            BindingFlags.NonPublic | BindingFlags.Static,
             null,
             [typeof(IEnumerable<RawColumnDto>)],
             null
         );
 
         // Act
-        var result = (List<TableSchema>)method!.Invoke(null, [columns])!;
+        List<TableSchema> result = (List<TableSchema>)method!.Invoke(null, [columns])!;
 
         // Assert
         Assert.Equal(2, result.Count);
@@ -249,8 +247,8 @@ public class PostgresSchemaReaderTests
     public void BuildTables_PreservesColumnProperties()
     {
         // Arrange
-        var columns = new List<RawColumnDto>
-        {
+        List<RawColumnDto> columns =
+        [
             new()
             {
                 Schema = "public",
@@ -260,19 +258,19 @@ public class PostgresSchemaReaderTests
                 MaxLength = 255,
                 IsNullable = true
             }
-        };
+        ];
 
-        var method = typeof(PostgresSchemaReader).GetMethod(
+        MethodInfo? method = typeof(PostgresSchemaReader).GetMethod(
             "BuildTables",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static,
+            BindingFlags.NonPublic | BindingFlags.Static,
             null,
             [typeof(IEnumerable<RawColumnDto>)],
             null
         );
 
         // Act
-        var result = (List<TableSchema>)method!.Invoke(null, [columns])!;
-        var column = result[0].Columns.First();
+        List<TableSchema> result = (List<TableSchema>)method!.Invoke(null, [columns])!;
+        ColumnSchema column = result[0].Columns.First();
 
         // Assert
         Assert.Equal("email", column.Name);
@@ -280,25 +278,23 @@ public class PostgresSchemaReaderTests
         Assert.Equal(255, column.MaxLength);
         Assert.True(column.IsNullable);
     }
-
     #endregion
 
     #region GetTablesQuery Tests
-
     [Fact]
     public void GetTablesQuery_ReturnsNonEmptyString()
     {
         // Arrange
-        var method = typeof(PostgresSchemaReader).GetMethod(
+        MethodInfo? method = typeof(PostgresSchemaReader).GetMethod(
             "GetTablesQuery",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static,
+            BindingFlags.NonPublic | BindingFlags.Static,
             null,
             Type.EmptyTypes,
             null
         );
 
         // Act
-        var result = (string)method!.Invoke(null, null)!;
+        string result = (string)method!.Invoke(null, null)!;
 
         // Assert
         Assert.NotNull(result);
@@ -309,16 +305,16 @@ public class PostgresSchemaReaderTests
     public void GetTablesQuery_ContainsRequiredKeywords()
     {
         // Arrange
-        var method = typeof(PostgresSchemaReader).GetMethod(
+        MethodInfo? method = typeof(PostgresSchemaReader).GetMethod(
             "GetTablesQuery",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static,
+            BindingFlags.NonPublic | BindingFlags.Static,
             null,
             Type.EmptyTypes,
             null
         );
 
         // Act
-        var query = (string)method!.Invoke(null, null)!;
+        string query = (string)method!.Invoke(null, null)!;
 
         // Assert
         Assert.Contains("information_schema.tables", query);
@@ -327,26 +323,25 @@ public class PostgresSchemaReaderTests
         Assert.Contains("information_schema", query);
         Assert.Contains("BASE TABLE", query);
     }
-
     #endregion
 
     #region GetDatabaseName Tests
-
     [Fact]
     public void GetDatabaseName_WithValidConnectionString_ReturnsDatabaseName()
     {
         // Arrange
         string connectionString = "Host=localhost;Username=postgres;Password=password;Database=testdb";
-        var method = typeof(PostgresSchemaReader).GetMethod(
+
+        MethodInfo? method = typeof(PostgresSchemaReader).GetMethod(
             "GetDatabaseName",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static,
+            BindingFlags.NonPublic | BindingFlags.Static,
             null,
             [typeof(string)],
             null
         );
 
         // Act
-        var result = (string)method!.Invoke(null, [connectionString])!;
+        string result = (string)method!.Invoke(null, [connectionString])!;
 
         // Assert
         Assert.Equal("testdb", result);
@@ -357,16 +352,17 @@ public class PostgresSchemaReaderTests
     {
         // Arrange
         string connectionStringWithoutDb = "Host=localhost;Username=postgres;Password=password;";
-        var method = typeof(PostgresSchemaReader).GetMethod(
+
+        MethodInfo? method = typeof(PostgresSchemaReader).GetMethod(
             "GetDatabaseName",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static,
+            BindingFlags.NonPublic | BindingFlags.Static,
             null,
             [typeof(string)],
             null
         );
 
         // Act & Assert
-        Assert.Throws<System.Reflection.TargetInvocationException>(() =>
+        Assert.Throws<TargetInvocationException>(() =>
         {
             method!.Invoke(null, [connectionStringWithoutDb]);
         });
@@ -376,36 +372,35 @@ public class PostgresSchemaReaderTests
     public void GetDatabaseName_ExtractsCorrectDatabaseFromVariousFormats()
     {
         // Arrange
-        var testCases = new[]
-        {
+        string[] testCases =
+        [
             "Host=localhost;Database=mydb;Username=user;Password=pass",
             "Database=production;Host=db.example.com;Username=admin;Password=secret",
             "postgresql://user:pass@localhost/customdb",
-        };
+        ];
 
-        var method = typeof(PostgresSchemaReader).GetMethod(
+        MethodInfo? method = typeof(PostgresSchemaReader).GetMethod(
             "GetDatabaseName",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static,
+            BindingFlags.NonPublic | BindingFlags.Static,
             null,
             [typeof(string)],
             null
         );
 
         // Act & Assert
-        foreach (var connectionString in testCases)
+        foreach (string connectionString in testCases)
         {
             try
             {
-                var result = (string)method!.Invoke(null, [connectionString])!;
+                string result = (string)method!.Invoke(null, [connectionString])!;
                 Assert.NotNull(result);
                 Assert.NotEmpty(result);
             }
-            catch (System.Reflection.TargetInvocationException)
+            catch (TargetInvocationException)
             {
                 // Expected for some formats
             }
         }
     }
-
     #endregion
 }
