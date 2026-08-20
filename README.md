@@ -45,6 +45,15 @@ SchemaCompare identifies all structural differences between two databases:
 
 ---
 
+
+## 👀 Preview
+
+![SchemaCompare Demo](Docs/Demo/schema-compare-demo.gif)
+
+> ⚠️ The connection strings shown in this preview have been deleted and were used for testing purposes only.
+
+---
+
 ## 💾 Supported providers
 
 SchemaCompare currently supports the following database providers:
