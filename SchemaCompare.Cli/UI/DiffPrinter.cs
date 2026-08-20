@@ -16,7 +16,7 @@ public static class DiffPrinter
             return;
         }
 
-        Tree rootTree = new("[yellow]Detected Differences (Target vs Source)[/]");
+        Tree rootTree = new("[yellow]Detected differences (Target vs Source)[/]");
 
         foreach (TableDiff t in diff.TablesRemoved)
         {
