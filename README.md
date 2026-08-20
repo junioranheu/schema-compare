@@ -11,9 +11,9 @@
 |-----------|--------|----------------|
 | Core Engine | ✅ Functional | - |
 | CLI Interface | ✅ Functional | - |
-| PostgreSQL | ✅ Tested | 2026-08-20 |
+| PostgreSQL | ✅ Tested | 2026-08-19 |
 | SQL Server | ⚠️ Untested | - |
-| MySQL | ⚠️ Untested | - |
+| MySQL | ✅ Tested | 2026-08-20 |
 | MariaDB | ⚠️ Untested | - |
 | SQLite | ⚠️ Untested | - |
 | Firebird | ⚠️ Untested | - |
@@ -60,9 +60,9 @@ SchemaCompare currently supports the following database providers:
 
 | Provider | Status | Unit Tests
 |----------|--------|------------------|
-| **PostgreSQL** | ✅ Tested | Yes | Yes (2026-08-20) |
+| **PostgreSQL** | ✅ Tested | Yes | Yes (2026-08-19) |
 | **SQL Server** | ⚠️ Implemented | Yes | No |
-| **MySQL** | ⚠️ Implemented | Yes | No |
+| **MySQL** | ✅ Tested | Yes | Yes (2026-08-20) |
 | **MariaDB** | ⚠️ Implemented | Yes | No |
 | **SQLite** | ⚠️ Implemented | Yes | No |
 | **Firebird** | ⚠️ Implemented | Yes | No |

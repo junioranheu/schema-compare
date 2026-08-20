@@ -20,7 +20,7 @@ public sealed class ProviderCatalog
             ProviderType = ProviderTypeEnum.PostgreSql,
             DisplayName = ProviderTypeEnum.PostgreSql.GetDescription(),
             TestingStatus = TestingStatusEnum.TestedWithSimpleTable,
-            RealTestingDate = new DateOnly(2026, 8, 20),
+            RealTestingDate = new DateOnly(2026, 8, 19),
             HasUnitTests = true
         },
         new()
@@ -35,8 +35,8 @@ public sealed class ProviderCatalog
         {
             ProviderType = ProviderTypeEnum.MySql,
             DisplayName = ProviderTypeEnum.MySql.GetDescription(),
-            TestingStatus = TestingStatusEnum.NotTested,
-            RealTestingDate = null,
+            TestingStatus = TestingStatusEnum.TestedWithSimpleTable,
+            RealTestingDate = new DateOnly(2026, 8, 20),
             HasUnitTests = true
         },
         new()

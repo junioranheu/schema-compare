@@ -39,8 +39,10 @@ public static class ConsoleInteractionService
     {
         AnsiConsole.MarkupLine("");
 
+        string example = role == "Source" ? "development" : "production";
+
         string name = AnsiConsole.Ask<string>(
-            prompt: $"[bold]{role} database name[/] (e.g. development):");
+            prompt: $"[bold]{role} database name[/] (e.g. {example}):");
 
         string connectionString = AnsiConsole.Prompt(
             new TextPrompt<string>(prompt: $"[bold]Connection string for {name}[/]:").
