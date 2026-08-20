@@ -1,4 +1,7 @@
+using SchemaCompare.Core.Consts;
 using SchemaCompare.Core.Enums;
+using SchemaCompare.Core.Extensions;
+using SchemaCompare.Core.Models;
 using Spectre.Console;
 
 namespace SchemaCompare.Cli.Services;
@@ -20,13 +23,14 @@ public static class ConsoleInteractionService
 
     public static ProviderTypeEnum SelectDatabaseProvider()
     {
-        ProviderTypeEnum[] providers = Enum.GetValues<ProviderTypeEnum>();
-
-        return AnsiConsole.Prompt(
-            new SelectionPrompt<ProviderTypeEnum>().
+        ProviderInfo selectedProvider = AnsiConsole.Prompt(
+            new SelectionPrompt<ProviderInfo>().
                 Title("[bold]Which database are you using?[/]").
                 PageSize(10).
-                AddChoices(providers));
+                AddChoices(ProviderCatalog.AllProviders).
+                UseConverter(x => $"{x.DisplayName} ({x.TestingStatus.GetDescription().ToLowerInvariant()})"));
+
+        return selectedProvider.ProviderType;
     }
 
     public static DatabaseInfo GetDatabaseInfo(string role)
